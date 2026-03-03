@@ -4,6 +4,12 @@
 TCMALLOC="$(ldconfig -p | grep -Po "libtcmalloc.so.\d" | head -n 1)"
 export LD_PRELOAD="${TCMALLOC}"
 
+# Download models from R2/S3 if credentials are provided
+if [ -n "$R2_ACCESS_KEY_ID" ] && [ -n "$R2_SECRET_ACCESS_KEY" ]; then
+    echo "worker-comfyui: Downloading models from R2..."
+    python /r2_model_loader.py || echo "worker-comfyui: Model download failed or skipped" >&2
+fi
+
 # Ensure ComfyUI-Manager runs in offline network mode inside the container
 comfy-manager-set-mode offline || echo "worker-comfyui - Could not set ComfyUI-Manager network_mode" >&2
 

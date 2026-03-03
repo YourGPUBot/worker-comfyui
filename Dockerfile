@@ -71,7 +71,10 @@ ADD src/extra_model_paths.yaml ./
 WORKDIR /
 
 # Install Python runtime dependencies for the handler
-RUN uv pip install runpod requests websocket-client
+RUN uv pip install runpod requests websocket-client boto3
+
+# Add R2 model loader
+ADD src/r2_model_loader.py /r2_model_loader.py
 
 # Add application code and scripts
 ADD src/start.sh src/network_volume.py handler.py test_input.json ./
