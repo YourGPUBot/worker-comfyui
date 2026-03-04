@@ -18,22 +18,25 @@ R2_BUCKET = os.getenv("R2_BUCKET", "comfyui-models")
 MODEL_LIST = os.getenv("MODEL_LIST", "")
 
 # Predefined model sets for common workflows
+# Base path for models - use volume if mounted, otherwise default to /comfyui
+MODEL_BASE_PATH = os.getenv("MODEL_BASE_PATH", "/runpod-volume" if os.path.exists("/runpod-volume") else "/comfyui")
+
 MODEL_SETS = {
     "flux2-faceswap": [
-        ("unet/flux-2-klein-9b.safetensors", "models/diffusion_models/flux-2-klein-9b.safetensors"),
-        ("vae/flux2-vae.safetensors", "models/vae/flux2-vae.safetensors"),
-        ("text_encoders/qwen_3_8b_fp8mixed.safetensors", "models/text_encoders/qwen_3_8b_fp8mixed.safetensors"),
-        ("loras/bfs_head_v1_flux-klein-9b_step3750_rank64.safetensors", "models/loras/bfs_head_v1_flux-klein-9b_step3750_rank64.safetensors"),
+        ("unet/flux-2-klein-9b.safetensors", f"{MODEL_BASE_PATH}/models/diffusion_models/flux-2-klein-9b.safetensors"),
+        ("vae/flux2-vae.safetensors", f"{MODEL_BASE_PATH}/models/vae/flux2-vae.safetensors"),
+        ("text_encoders/qwen_3_8b_fp8mixed.safetensors", f"{MODEL_BASE_PATH}/models/text_encoders/qwen_3_8b_fp8mixed.safetensors"),
+        ("loras/bfs_head_v1_flux-klein-9b_step3750_rank64.safetensors", f"{MODEL_BASE_PATH}/models/loras/bfs_head_v1_flux-klein-9b_step3750_rank64.safetensors"),
     ],
     "sdxl": [
-        ("checkpoints/sd_xl_base_1.0.safetensors", "models/checkpoints/sd_xl_base_1.0.safetensors"),
-        ("vae/sdxl_vae.safetensors", "models/vae/sdxl_vae.safetensors"),
+        ("checkpoints/sd_xl_base_1.0.safetensors", f"{MODEL_BASE_PATH}/models/checkpoints/sd_xl_base_1.0.safetensors"),
+        ("vae/sdxl_vae.safetensors", f"{MODEL_BASE_PATH}/models/vae/sdxl_vae.safetensors"),
     ],
     "flux1-schnell": [
-        ("unet/flux1-schnell.safetensors", "models/unet/flux1-schnell.safetensors"),
-        ("clip/clip_l.safetensors", "models/clip/clip_l.safetensors"),
-        ("clip/t5xxl_fp8_e4m3fn.safetensors", "models/clip/t5xxl_fp8_e4m3fn.safetensors"),
-        ("vae/ae.safetensors", "models/vae/ae.safetensors"),
+        ("unet/flux1-schnell.safetensors", f"{MODEL_BASE_PATH}/models/unet/flux1-schnell.safetensors"),
+        ("clip/clip_l.safetensors", f"{MODEL_BASE_PATH}/models/clip/clip_l.safetensors"),
+        ("clip/t5xxl_fp8_e4m3fn.safetensors", f"{MODEL_BASE_PATH}/models/clip/t5xxl_fp8_e4m3fn.safetensors"),
+        ("vae/ae.safetensors", f"{MODEL_BASE_PATH}/models/vae/ae.safetensors"),
     ],
 }
 
@@ -88,7 +91,8 @@ def download_models():
     failed = 0
     
     for r2_key, local_path in models:
-        full_path = f"/comfyui/{local_path}"
+        # local_path already includes MODEL_BASE_PATH prefix
+        full_path = local_path
         
         if os.path.exists(full_path):
             size_mb = os.path.getsize(full_path) / 1024 / 1024
