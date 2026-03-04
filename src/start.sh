@@ -7,7 +7,12 @@ export LD_PRELOAD="${TCMALLOC}"
 # Download models from R2/S3 if credentials are provided
 if [ -n "$R2_ACCESS_KEY_ID" ] && [ -n "$R2_SECRET_ACCESS_KEY" ]; then
     echo "worker-comfyui: Downloading models from R2..."
-    python /r2_model_loader.py || echo "worker-comfyui: Model download failed or skipped" >&2
+    python /r2_model_loader.py
+    if [ $? -ne 0 ]; then
+        echo "worker-comfyui: CRITICAL - Model download failed, cannot start worker" >&2
+        exit 1
+    fi
+    echo "worker-comfyui: Model download complete"
 fi
 
 # Ensure ComfyUI-Manager runs in offline network mode inside the container
