@@ -9,7 +9,7 @@ import json
 # R2/S3 Config from env
 R2_ENDPOINT = os.getenv("R2_ENDPOINT", "https://38d27e0247b1a8b9aeb73d8ec4648262.r2.cloudflarestorage.com")
 R2_ACCESS_KEY = os.getenv("R2_ACCESS_KEY_ID")
-2R2_SECRET_KEY = os.getenv("R2_SECRET_ACCESS_KEY")
+R2_SECRET_KEY = os.getenv("R2_SECRET_ACCESS_KEY")
 R2_BUCKET = os.getenv("R2_BUCKET", "comfyui-models")
 
 # Model configuration via env var
