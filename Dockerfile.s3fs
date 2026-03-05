@@ -1,5 +1,7 @@
 # RunPod ComfyUI Worker with R2 Model Mounting
-# GitHub auto-deploy compatible version with s3fs support
+# This Dockerfile creates a minimal image that mounts models from R2/S3 using s3fs
+# Container size: ~3-4GB (ComfyUI + deps only, no models)
+# Models are streamed from R2 on-demand via FUSE mount
 
 ARG BASE_IMAGE=nvidia/cuda:12.6.3-cudnn-runtime-ubuntu24.04
 
@@ -72,8 +74,7 @@ WORKDIR /
 COPY handler.py .
 COPY src/start-s3fs.sh /start.sh
 COPY src/network_volume.py .
-COPY rp_handler.sh /rp_handler.sh
-RUN chmod +x /start.sh /rp_handler.sh
+RUN chmod +x /start.sh
 
 # Add custom node installer script
 COPY scripts/comfy-node-install.sh /usr/local/bin/comfy-node-install
@@ -90,6 +91,5 @@ ENV R2_BUCKET=comfyui-models
 ENV COMFY_LOG_LEVEL=DEBUG
 ENV PYTHONUNBUFFERED=1
 
-# RunPod GitHub auto-deploy compatibility
-# This is the standard entry point RunPod expects
-CMD ["/rp_handler.sh"]
+# Set the default command
+CMD ["/start.sh"]
